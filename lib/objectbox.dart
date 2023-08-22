@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:gallery_app/modules/model.dart';
 import 'objectbox.g.dart';
 
@@ -14,6 +14,7 @@ class ObjectBox{
   ObjectBox._create(this.store){
     taskBox = Box<Task>(store);
     ownerBox = Box<Owner>(store);
+    eventBox = Box<Event>(store);
 
 
     if(eventBox.isEmpty()){
@@ -27,11 +28,15 @@ class ObjectBox{
     Owner owner2 = Owner('Annie');
 
     Task task1 = Task('This is  a shared task');
-    task1.owner.add(owner2);
+    task1.owner.addAll([owner1, owner2]);
+    
 
     Task task2 = Task('This is Eren\'s task');
-    task1.owner.addAll([owner1, owner2]);
+    task2.owner.add(owner1);
+    
 
+    //event.tasks.add(task1);
+    //event.tasks.add(task2); la ligne en dessous remplace ces deux lignes.
     event.tasks.addAll([task1, task2]);
     eventBox.put(event);
   }
@@ -41,9 +46,9 @@ class ObjectBox{
     return ObjectBox._create(store);
   }
 
-  void addTask(String taskText, Owner owner, Event event){
+  void addTask(String taskText, List<Owner> owners, Event event){
     Task newTask = Task(taskText);
-    newTask.owner.add(owner);
+    newTask.owner.addAll(owners);
 
     event.tasks.add(newTask);
     newTask.event.target=event;

@@ -3,6 +3,7 @@ import 'package:gallery_app/components/task_list_view.dart';
 
 import '../main.dart';
 import '../modules/model.dart';
+import 'owner_list.dart';
 
 class AddTask extends StatefulWidget {
   final Event event;
@@ -15,30 +16,22 @@ class AddTask extends StatefulWidget {
 class _AddTaskState extends State<AddTask> {
   final inputController = TextEditingController();
   final OwnerInputController = TextEditingController();
-  List<Owner> owners = objectBox.ownerBox.getAll();
-  late Owner currentOwner;
+  List<Owner> currentOwner =[];
+  
+  //late Owner currentOwner;
 
   @override
   void initState() {
-    currentOwner = owners[0];
     super.initState();
   }
 
-  void updateOwner(int newOwnerId) {
-    Owner newCurrentOwner = objectBox.ownerBox.get(newOwnerId)!;
-    setState(() {
-      currentOwner = newCurrentOwner;
-    });
-  }
 
   void createOwner() {
     Owner newOwner = Owner(OwnerInputController.text);
     objectBox.ownerBox.put(newOwner);
-    List<Owner> newOwnerList = objectBox.ownerBox.getAll();
 
     setState(() {
-      currentOwner = newOwner;
-      owners = newOwnerList;
+      currentOwner = [newOwner];
     });
   }
 
@@ -63,6 +56,7 @@ class _AddTaskState extends State<AddTask> {
                 controller: inputController,
               ),
             ),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Row(
@@ -71,52 +65,8 @@ class _AddTaskState extends State<AddTask> {
                     'Assign Owner:',
                     style: TextStyle(fontSize: 17),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: DropdownButton<int>(
-                        value: currentOwner.id,
-                        onChanged: (value) => {updateOwner(value!)},
-                        underline: Container(
-                          height: 1.5,
-                          color: Colors.blueAccent,
-                        ),
-                        items: owners
-                            .map((element) => DropdownMenuItem(
-                                value: element.id,
-                                child: Text(element.name,
-                                    style: const TextStyle(
-                                        fontSize: 15.0,
-                                        height: 1.0,
-                                        overflow: TextOverflow.fade))))
-                            .toList()),
-                  ),
-                  // const Spacer(),
-                  // TextButton(
-                  //     onPressed: () {
-                  //       showDialog(
-                  //           context: context,
-                  //           builder: (BuildContext context) => AlertDialog(
-                  //                 title: const Text('New Owner'),
-                  //                 content: TextField(
-                  //                   controller: OwnerInputController,
-                  //                   autofocus: true,
-                  //                   decoration: const InputDecoration(
-                  //                       hintText: "enter ther Owner name"),
-                  //                 ),
-                  //                 actions: [
-                  //                   TextButton(
-                  //                       onPressed: () {
-                  //                         createOwner();
-                  //                         Navigator.of(context).pop();
-                  //                       },
-                  //                       child: Text("Submit"))
-                  //                 ],
-                  //               ));
-                  //     },
-                  //     child: const Text(
-                  //       "Add Owner",
-                  //       style: TextStyle(fontWeight: FontWeight.bold),
-                  //     ))
+                  Expanded(child: Card(child: OwnerDisplay(context),))
+                 
                 ],
               ),
             ),
@@ -124,6 +74,33 @@ class _AddTaskState extends State<AddTask> {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: Row(
                 children: [
+                  const Spacer(),
+                  TextButton(
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                                  title: const Text('New Owner'),
+                                  content: TextField(
+                                    controller: OwnerInputController,
+                                    autofocus: true,
+                                    decoration: const InputDecoration(
+                                        hintText: "enter ther Owner name"),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                        onPressed: () {
+                                          createOwner();
+                                          Navigator.of(context).pop();
+                                        },
+                                        child: Text("Submit"))
+                                  ],
+                                ));
+                      },
+                      child: const Text(
+                        "Add Owner",
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                   ))
                 ],
               ),
             ),
@@ -144,5 +121,40 @@ class _AddTaskState extends State<AddTask> {
 
           ],
         ));
+  }
+
+  Widget OwnerDisplay(context){
+    dynamic onTap() async{
+      final selectedOwners = await Navigator.of(context).push(MaterialPageRoute(builder:(context) => const OwnerList()));
+
+      if (selectedOwners == null) return;
+      setState(() {
+        currentOwner = selectedOwners;
+      });
+      return selectedOwners;
+    }
+
+    return currentOwner.isEmpty
+            ?buildListTitle (title: "No Owner", onTap: onTap )
+            :buildListTitle(
+              title: currentOwner.map((owners) => owners.name).join(", "),
+              onTap: onTap
+            );
+  }
+
+  Widget buildListTitle({required String title, required VoidCallback onTap}){
+    return ListTile(
+      onTap: onTap,
+      title: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: const TextStyle(color: Colors.black, 
+        fontSize: 18,
+        ),
+      ), 
+      trailing: const Icon(Icons.arrow_drop_down, color: Colors.black, size: 20,),
+
+    );
   }
 }

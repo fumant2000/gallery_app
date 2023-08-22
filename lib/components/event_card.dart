@@ -34,48 +34,52 @@ class _EventCardState extends State<EventCard> {
           )
          ]
         ),
-        child: Expanded(
-          child: Column(
-            children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                padding: const EdgeInsets.all(5),
-                child: Text(
-                  widget.event.name,
-                  style: const TextStyle(
-                    fontSize: 25,
-                    height: 1.0,
-                    overflow: TextOverflow.fade
-                  ),
-              
-              )
-              
-                    ,
-              ),
-              Container(alignment: Alignment.centerLeft,
-              padding: EdgeInsets.all(10),
-              child: Row(
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
                 children: [
-                  Text("Location: ${widget.event.location}",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.0,
-                    overflow: TextOverflow.fade
+                  Container(
+                    alignment: Alignment.centerLeft,
+                    padding: const EdgeInsets.all(5),
+                    child: Text(
+                      widget.event.name,
+                      style: const TextStyle(
+                        fontSize: 25,
+                        height: 1.0,
+                        overflow: TextOverflow.fade
+                      ),
+                  
+                  )
+                  
+                        ,
                   ),
+                  Container(alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(10),
+                  child: Row(
+                    children: [
+                      Text("Location: ${widget.event.location}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        height: 1.0,
+                        overflow: TextOverflow.fade
+                      ),
+                      ),
+                     const  Spacer(),
+                      Text("Date: ${DateFormat.yMd().format(widget.event.date!)}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        height: 1.0,
+                        overflow: TextOverflow.fade
+                      ),
+                      ),
+                    ],
                   ),
-                 const  Spacer(),
-                  Text("Date: ${widget.event.date}",
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.0,
-                    overflow: TextOverflow.fade
-                  ),
-                  ),
-                ],
+                  )
+                  ],
               ),
-              )
-              ],
-          ),
+            ),
+          ],
         ),
       ),
     );

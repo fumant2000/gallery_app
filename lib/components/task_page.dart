@@ -22,16 +22,20 @@ class _TaskPageState extends State<TaskPage> {
         title: Text("Tasks for ${widget.event.name}"),
       ),
       body: Column(
-        children: [
-          Expanded(child: TaskList(eventId: widget.event.id))
-        ],
+        children: [Expanded(child: TaskList(eventId: widget.event.id))],
       ),
-       floatingActionButton: FloatingActionButton(
-        onPressed: ()async{
-          await Navigator.of(context).push(MaterialPageRoute(builder: (context)=>AddTask(event: widget.event,)));
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => AddTask(
+                    event: widget.event,
+                  )));
+                  setState(() {
+                    
+                  });
         },
         child: const Icon(Icons.add),
-        ),
+      ),
     );
   }
 }
